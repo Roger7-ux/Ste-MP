@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediQ · Wait at home, not in the waiting room</title>
+    <meta
+      name="description"
+      content="Find a doctor, book a time, get your appointment ID and follow your place in the queue."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MediQ" />
+    <meta property="og:title" content="MediQ · Wait at home, not in the waiting room" />
+    <meta
+      property="og:description"
+      content="Find a doctor, book a time, get your appointment ID and follow your place in the queue."
+    />
+    <meta name="theme-color" content="#f4f8f9" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      // Apply the saved theme before first paint so the page never flashes.
+      (function () {
+        var theme = 'system';
+        try {
+          theme = localStorage.getItem('clinic_theme') || 'system';
+        } catch (e) {}
+        var dark =
+          theme === 'dark' ||
+          (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

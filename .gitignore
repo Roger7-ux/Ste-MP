@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+*.db
+*.db-wal
+*.db-shm
+
+# Node (only needed to rebuild the interface)
+node_modules/
+
+# Local settings
+.env
+.env.local
+*.log
+.claude/
+
+# The database and session secret of this computer
+data/

@@ -1,0 +1,326 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens. Components use the Tailwind names mapped below
+   (bg-surface, text-muted, rounded-card …), never raw hex values.
+   --------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+
+  /* MediQ palette: a clinical teal on cool, clean neutrals, with a warm coral
+     accent. Teal reads as calm and medical; coral keeps it from feeling cold
+     and marks the small labels. */
+  --background: #f4f8f9;
+  --surface: #fdfefe;
+  --surface-sunken: #e8eff1;
+  --border: #dce6e9;
+  --border-strong: #c0d0d6;
+  --foreground: #12272f;
+  --muted: #536972;
+  --primary: #0e6b7b;
+  --primary-hover: #0b5a68;
+  --primary-foreground: #f6fcfd;
+  --primary-soft: #d9eef1;
+  --accent: #a8472a;
+  --icon-chip: #d3e9ed;
+  --danger: #b3261e;
+  --danger-soft: #fbe4e1;
+  --overlay: rgb(18 39 47 / 0.45);
+
+  /* Stacking order */
+  --z-header: 30;
+  --z-overlay: 50;
+  --z-toast: 60;
+
+  /* Motion: 150–250ms for interface changes, up to 500ms for hero reveals */
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 500ms;
+
+  --status-booked-bg: #dde6f6;
+  --status-booked-fg: #27468a;
+  --status-waiting-bg: #f8e6bb;
+  --status-waiting-fg: #6f4b00;
+  --status-called-bg: #cdebe6;
+  --status-called-fg: #0d5a4f;
+  --status-consult-bg: #b9dfe6;
+  --status-consult-fg: #0a4d5a;
+  --status-completed-bg: #e2e8ea;
+  --status-completed-fg: #3f4f57;
+  --status-cancelled-bg: #f6dcd6;
+  --status-cancelled-fg: #8f2a1d;
+  --status-noshow-bg: #e9dff0;
+  --status-noshow-fg: #5b2f7a;
+
+  --shadow-soft-value: 0 1px 2px rgb(18 39 47 / 0.04), 0 4px 16px rgb(18 39 47 / 0.05);
+  --shadow-lift-value: 0 2px 4px rgb(18 39 47 / 0.05), 0 12px 28px rgb(18 39 47 / 0.1);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #0e1a1f;
+  --surface: #15252b;
+  --surface-sunken: #0a1418;
+  --border: #253a42;
+  --border-strong: #38515a;
+  --foreground: #e7f1f3;
+  --muted: #9db2b9;
+  --primary: #5fc4d3;
+  --primary-hover: #80d2de;
+  --primary-foreground: #05252c;
+  --primary-soft: #143943;
+  --accent: #f2a688;
+  --icon-chip: #1a3e48;
+  --danger: #f59c92;
+  --danger-soft: #47211d;
+  --overlay: rgb(0 0 0 / 0.6);
+
+  --status-booked-bg: #1f3354;
+  --status-booked-fg: #c2d6f8;
+  --status-waiting-bg: #4a3a12;
+  --status-waiting-fg: #f3d98f;
+  --status-called-bg: #12423b;
+  --status-called-fg: #a6e6da;
+  --status-consult-bg: #0e4652;
+  --status-consult-fg: #b3ebf3;
+  --status-completed-bg: #29373d;
+  --status-completed-fg: #d0dbde;
+  --status-cancelled-bg: #4d2620;
+  --status-cancelled-fg: #f3c3ba;
+  --status-noshow-bg: #3b2850;
+  --status-noshow-fg: #dfc9f3;
+
+  --shadow-soft-value: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+  --shadow-lift-value: 0 2px 4px rgb(0 0 0 / 0.35), 0 12px 28px rgb(0 0 0 / 0.4);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-sunken: var(--surface-sunken);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-icon-chip: var(--icon-chip);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-overlay: var(--overlay);
+
+  --shadow-soft: var(--shadow-soft-value);
+  --shadow-lift: var(--shadow-lift-value);
+}
+
+@theme {
+  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-sans: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+
+  --radius-card: 16px;
+  --radius-button: 10px;
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  --animate-drift: drift 6s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Decorative dot grids slide by one cell, so the loop has no visible seam. */
+@keyframes drift {
+  to {
+    background-position: 22px 22px;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background font-sans text-[15px] leading-relaxed text-foreground antialiased sm:text-base;
+    transition: background-color 200ms var(--ease-soft), color 200ms var(--ease-soft);
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight text-balance;
+    font-optical-sizing: auto;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+
+  ::selection {
+    background: var(--primary-soft);
+  }
+}
+
+@utility dot-grid {
+  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Skeleton placeholder with a moving highlight. */
+@utility shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--surface-sunken) 25%,
+    var(--border) 37%,
+    var(--surface-sunken) 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+/* Content that arrives after loading fades and lifts into place. Set
+   --rise-delay to hold it back; `stagger-rise` on a list does that for each
+   child in turn. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+
+@utility animate-rise {
+  animation: rise-in 420ms var(--ease-soft) var(--rise-delay, 0ms) backwards;
+}
+
+@utility stagger-rise {
+  & > * {
+    animation: rise-in 420ms var(--ease-soft) backwards;
+  }
+  & > :nth-child(2) {
+    animation-delay: 45ms;
+  }
+  & > :nth-child(3) {
+    animation-delay: 90ms;
+  }
+  & > :nth-child(4) {
+    animation-delay: 135ms;
+  }
+  & > :nth-child(5) {
+    animation-delay: 180ms;
+  }
+  & > :nth-child(6) {
+    animation-delay: 225ms;
+  }
+  & > :nth-child(n + 7) {
+    animation-delay: 270ms;
+  }
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Entry and exit animations for dialogs, sheets and menus. Each animates only
+   opacity, scale or translate, so nothing reflows. */
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes overlay-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+@keyframes dialog-out {
+  to {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+@keyframes sheet-right-in {
+  from {
+    translate: 100% 0;
+  }
+}
+@keyframes sheet-right-out {
+  to {
+    translate: 100% 0;
+  }
+}
+@keyframes sheet-bottom-in {
+  from {
+    translate: 0 100%;
+  }
+}
+@keyframes sheet-bottom-out {
+  to {
+    translate: 0 100%;
+  }
+}
+
+/* Changing theme cross-fades the whole page instead of snapping. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: var(--ease-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
