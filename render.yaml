@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: mediq
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: waitress-serve --host=0.0.0.0 --port=$PORT wsgi:app
+    envVars:
+      - key: CLINIC_CODE
+        description: Clinic code for staff/doctor sign-up (change from default)
+        required: true
+      - key: SECRET_KEY
+        description: Random secret for session security
+        required: true
+      - key: HTTPS
+        description: Set to 1 when served over HTTPS
+        value: "1"
+      - key: TRUST_PROXY
+        description: Set to 1 when behind a proxy (Render's load balancer)
+        value: "1"
+      - key: CLINIC_DATA_DIR
+        description: Directory for persistent data (Render persistent disk)
+        # Note: You'll need to add a persistent disk in Render dashboard and set this to its mount path
+        # Example: /var/lib/data/clinic-data
+        required: false
+    # Uncomment below if you want to use external database instead of SQLite
+    # - key: DATABASE_URL
+    #   description: External database URL (PostgreSQL/MySQL)
+    #   required: true
+    #   # If using this, you may not need CLINIC_DATA_DIR for SQLite file
+    #   # But you still need it for session secret unless you set SECRET_KEY via env var
+    #
+    # Alternative: Use Render's persistent disk for data directory
+    # disks:
+    #   - name: clinic-data
+    #     mountPath: /var/lib/data
+    #     sizeGB: 1
